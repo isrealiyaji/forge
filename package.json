@@ -1,0 +1,13 @@
+{
+  "name": "gym-management-app",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace apps/api",
+    "dev:web": "npm run dev --workspace apps/web",
+    "migrate": "npm run migrate --workspace apps/api"
+  }
+}
