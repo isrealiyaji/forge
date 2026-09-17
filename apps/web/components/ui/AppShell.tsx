@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Menu, X, Bell } from "lucide-react";
 import Sidebar from "./Sidebar";
+import ThemeToggle from "./ThemeToggle";
 import { NAV_CONFIG, type Role } from "@/lib/nav-config";
 
 type AppShellProps = {
@@ -62,14 +63,17 @@ const AppShell = ({ role, personName, children }: AppShellProps) => {
             <p className="font-display text-lg tracking-poster text-ink-inverse">FORGE</p>
           </div>
 
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="relative ml-auto text-ink-inverse transition-opacity hover:opacity-70"
-          >
-            <Bell size={20} strokeWidth={2} />
-            <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
-          </button>
+          <div className="ml-auto flex items-center gap-4">
+            <ThemeToggle />
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="relative text-ink-inverse transition-opacity hover:opacity-70"
+            >
+              <Bell size={20} strokeWidth={2} />
+              <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
+            </button>
+          </div>
         </header>
 
         {/* Only this scrolls */}

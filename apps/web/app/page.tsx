@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import SealBadge from "@/components/ui/SealBadge";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const programs = [
   {
@@ -68,12 +69,15 @@ const LandingPage = () => {
             Membership
           </a>
         </nav>
-        <a
-          href="/member"
-          className="rounded-sm border border-ink-inverse/30 px-4 py-2 text-sm font-semibold text-ink-inverse transition-colors hover:border-ink-inverse"
-        >
-          Member Login
-        </a>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <a
+            href="/member"
+            className="rounded-sm border border-ink-inverse/30 px-4 py-2 text-sm font-semibold text-ink-inverse transition-colors hover:border-ink-inverse"
+          >
+            Member Login
+          </a>
+        </div>
       </header>
 
       {/* Hero */}

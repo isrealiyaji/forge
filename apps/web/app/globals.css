@@ -19,20 +19,28 @@
   --alert: #c4172c;
   --good: #cf9a2e;
   --neutral: #6b5f4d;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --ground: #f5efe1;
+  --ink-inverse: #171310;
+  --muted-inverse: #6f6553;
+  --line-dark: rgba(20, 15, 8, 0.12);
+  --panel: #fffdf8;
+  --panel-raised: #f7f1e4;
+  color-scheme: light;
 }
 
 * {
   border-color: var(--line-dark);
 }
 
-html {
-  color-scheme: dark;
-}
-
 body {
   background: var(--ground);
   color: var(--ink-inverse);
   font-feature-settings: "tnum" 1, "cv11" 1;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 ::selection {
