@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import AppShell from "@/components/ui/AppShell";
-import { instructorToday } from "@/lib/mock-data";
+import { requireRole } from "@/lib/auth/session";
 
-const InstructorLayout = ({ children }: { children: ReactNode }) => {
+const InstructorLayout = async ({ children }: { children: ReactNode }) => {
+  const user = await requireRole("instructor");
   return (
-    <AppShell role="instructor" personName={instructorToday.name}>
+    <AppShell role="instructor" personName={user.name}>
       {children}
     </AppShell>
   );

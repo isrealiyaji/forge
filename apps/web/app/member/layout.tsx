@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import AppShell from "@/components/ui/AppShell";
-import { memberProfile } from "@/lib/mock-data";
+import { requireRole } from "@/lib/auth/session";
 
-const MemberLayout = ({ children }: { children: ReactNode }) => {
+const MemberLayout = async ({ children }: { children: ReactNode }) => {
+  const user = await requireRole("member");
   return (
-    <AppShell role="member" personName={memberProfile.name}>
+    <AppShell role="member" personName={user.name}>
       {children}
     </AppShell>
   );

@@ -1,23 +1,37 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthShell from "@/components/ui/AuthShell";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
+import { authApi } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
-const LoginPage = () => {
+const ROLE_HOME: Record<string, string> = { admin: "/admin", member: "/member", instructor: "/instructor" };
+
+const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     setSubmitting(true);
-    // No backend yet — real auth will redirect based on the account's role.
-    setTimeout(() => router.push("/member"), 500);
+    try {
+      const { user } = await authApi.login({ email, password });
+      const next = searchParams.get("next");
+      router.push(next || ROLE_HOME[user.role] || "/");
+      router.refresh();
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +48,11 @@ const LoginPage = () => {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
+        {formError ? (
+          <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
+            {formError}
+          </p>
+        ) : null}
         <FormField
           label="Email"
           name="email"
@@ -77,5 +96,11 @@ const LoginPage = () => {
     </AuthShell>
   );
 };
+
+const LoginPage = () => (
+  <Suspense fallback={null}>
+    <LoginForm />
+  </Suspense>
+);
 
 export default LoginPage;

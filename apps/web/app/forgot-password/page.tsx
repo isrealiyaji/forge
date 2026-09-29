@@ -5,20 +5,27 @@ import { MailCheck } from "lucide-react";
 import AuthShell from "@/components/ui/AuthShell";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
+import { authApi } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     setSubmitting(true);
-    // No backend yet — this will email a reset link if the account exists.
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      await authApi.forgotPassword(email);
       setSubmitted(true);
-    }, 500);
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -30,7 +37,7 @@ const ForgotPasswordPage = () => {
         <div className="flex flex-col items-center gap-6 py-4 text-center">
           <MailCheck size={40} className="text-accent" strokeWidth={1.5} />
           <div className="flex w-full flex-col gap-3 sm:flex-row">
-            <Button variant="secondary" className="flex-1" onClick={() => setSubmitted(false)}>
+            <Button variant="secondary" className="flex-1" onClick={() => authApi.forgotPassword(email)}>
               Resend Email
             </Button>
             <a href="/login" className="flex-1">
@@ -53,6 +60,11 @@ const ForgotPasswordPage = () => {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
+        {formError ? (
+          <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
+            {formError}
+          </p>
+        ) : null}
         <FormField
           label="Email"
           name="email"

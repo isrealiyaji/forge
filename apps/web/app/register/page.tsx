@@ -5,6 +5,8 @@ import { MailCheck } from "lucide-react";
 import AuthShell from "@/components/ui/AuthShell";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
+import { authApi } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 type Errors = Partial<Record<"name" | "email" | "password" | "confirmPassword", string>>;
 
@@ -14,6 +16,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -27,15 +30,19 @@ const RegisterPage = () => {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!validate()) return;
     setSubmitting(true);
-    // No backend yet — this will create the member account and send a verification email.
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      await authApi.register({ name, email, password });
       setSubmitted(true);
-    }, 500);
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -50,7 +57,7 @@ const RegisterPage = () => {
             Didn&apos;t get it? Check spam, or resend below.
           </p>
           <div className="flex w-full flex-col gap-3 sm:flex-row">
-            <Button variant="secondary" className="flex-1" onClick={() => setSubmitted(false)}>
+            <Button variant="secondary" className="flex-1" onClick={() => authApi.resendVerification(email)}>
               Resend Email
             </Button>
             <a href="/login" className="flex-1">
@@ -76,6 +83,11 @@ const RegisterPage = () => {
       }
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {formError ? (
+          <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
+            {formError}
+          </p>
+        ) : null}
         <FormField
           label="Full Name"
           name="name"

@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
+import { authApi } from "@/lib/api/auth";
 
 type NavItem = {
   label: string;
@@ -17,6 +18,13 @@ type SidebarProps = {
 
 const Sidebar = ({ roleLabel, personName, items }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await authApi.logout().catch(() => {});
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-line-dark bg-ground px-4 py-6">
@@ -60,9 +68,13 @@ const Sidebar = ({ roleLabel, personName, items }: SidebarProps) => {
 
       <div className="mt-6 border-t border-line-dark px-2 pt-4">
         <p className="text-sm font-semibold text-ink-inverse">{personName}</p>
-        <a href="/" className="text-xs font-medium text-muted-inverse hover:text-ink-inverse">
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="text-xs font-medium text-muted-inverse hover:text-ink-inverse"
+        >
           Sign out
-        </a>
+        </button>
       </div>
     </aside>
   );

@@ -1,21 +1,23 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { CircleCheck } from "lucide-react";
 import AuthShell from "@/components/ui/AuthShell";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
-
-// In production, the invited email and role come from the invite token in the URL.
-const INVITE = { email: "chiamaka.eze@forgeathletic.club", role: "Instructor" };
+import { authApi } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 type Errors = Partial<Record<"name" | "password" | "confirmPassword", string>>;
 
-const AcceptInvitePage = () => {
+const AcceptInviteForm = () => {
+  const token = useSearchParams().get("token");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -28,16 +30,32 @@ const AcceptInvitePage = () => {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    setFormError(null);
+    if (!validate() || !token) return;
     setSubmitting(true);
-    // No backend yet — this will consume the invite token and activate the account.
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      await authApi.acceptInvite({ token, name, password });
       setSubmitted(true);
-    }, 500);
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (!token) {
+    return (
+      <AuthShell title="Invalid Invite" subtitle="This invite link is missing or malformed. Ask an admin to resend it.">
+        <a href="/" className="w-full">
+          <Button variant="secondary" className="w-full">
+            Back to Home
+          </Button>
+        </a>
+      </AuthShell>
+    );
+  }
 
   if (submitted) {
     return (
@@ -53,12 +71,13 @@ const AcceptInvitePage = () => {
   }
 
   return (
-    <AuthShell
-      title="Activate Your Account"
-      subtitle={`Set a password for ${INVITE.email} to finish joining Forge Athletic Club.`}
-      eyebrowBadge={`Invited as ${INVITE.role}`}
-    >
+    <AuthShell title="Activate Your Account" subtitle="Set a password to finish joining Forge Athletic Club.">
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {formError ? (
+          <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
+            {formError}
+          </p>
+        ) : null}
         <FormField
           label="Full Name"
           name="name"
@@ -99,5 +118,11 @@ const AcceptInvitePage = () => {
     </AuthShell>
   );
 };
+
+const AcceptInvitePage = () => (
+  <Suspense fallback={null}>
+    <AcceptInviteForm />
+  </Suspense>
+);
 
 export default AcceptInvitePage;

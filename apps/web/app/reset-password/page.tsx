@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { CircleCheck } from "lucide-react";
 import AuthShell from "@/components/ui/AuthShell";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
+import { authApi } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 type Errors = Partial<Record<"password" | "confirmPassword", string>>;
 
-const ResetPasswordPage = () => {
+const ResetPasswordForm = () => {
+  const token = useSearchParams().get("token");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -23,16 +28,30 @@ const ResetPasswordPage = () => {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    setFormError(null);
+    if (!validate() || !token) return;
     setSubmitting(true);
-    // No backend yet — this will verify the reset token and update the password.
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      await authApi.resetPassword({ token, password });
       setSubmitted(true);
-    }, 500);
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (!token) {
+    return (
+      <AuthShell title="Invalid Link" subtitle="This password reset link is missing or malformed.">
+        <a href="/forgot-password" className="w-full">
+          <Button className="w-full">Request a New Link</Button>
+        </a>
+      </AuthShell>
+    );
+  }
 
   if (submitted) {
     return (
@@ -50,6 +69,11 @@ const ResetPasswordPage = () => {
   return (
     <AuthShell title="Reset Password" subtitle="Choose a new password for your account.">
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {formError ? (
+          <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
+            {formError}
+          </p>
+        ) : null}
         <FormField
           label="New Password"
           name="password"
@@ -80,5 +104,11 @@ const ResetPasswordPage = () => {
     </AuthShell>
   );
 };
+
+const ResetPasswordPage = () => (
+  <Suspense fallback={null}>
+    <ResetPasswordForm />
+  </Suspense>
+);
 
 export default ResetPasswordPage;
