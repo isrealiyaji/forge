@@ -38,6 +38,23 @@ const createBooking = async (scheduleId, memberId) => {
   return rows[0];
 };
 
+const listMyBookings = async (memberId) => {
+  const { rows } = await pool.query(
+    `SELECT cb.id AS booking_id, cb.status, cs.id AS schedule_id, cs.start_time, cs.end_time,
+            c.name AS class_name, u.name AS instructor_name
+     FROM class_bookings cb
+     JOIN class_schedules cs ON cs.id = cb.schedule_id
+     JOIN classes c ON c.id = cs.class_id
+     LEFT JOIN instructors i ON i.id = c.instructor_id
+     LEFT JOIN users u ON u.id = i.user_id
+     WHERE cb.member_id = $1 AND cb.status IN ('booked', 'waitlisted') AND cs.start_time > now()
+     ORDER BY cs.start_time ASC
+     LIMIT 10`,
+    [memberId],
+  );
+  return rows;
+};
+
 const cancelBooking = async (bookingId, memberId) => {
   const { rows } = await pool.query(
     `UPDATE class_bookings SET status = $1 WHERE id = $2 AND member_id = $3 AND status IN ('booked','waitlisted')
@@ -68,4 +85,4 @@ const promoteWaitlistIfRoom = async (scheduleId) => {
   return rows[0] || null;
 };
 
-module.exports = { createBooking, cancelBooking, promoteWaitlistIfRoom };
+module.exports = { createBooking, cancelBooking, promoteWaitlistIfRoom, listMyBookings };

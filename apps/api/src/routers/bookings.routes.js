@@ -10,6 +10,7 @@ const router = Router();
 
 router.use(authMiddleware, authorize(ROLES.MEMBER));
 
+router.get("/", bookingController.myBookings);
 router.post("/", validate(createBookingSchema), bookingController.create);
 router.delete("/:id", bookingController.cancel);
 

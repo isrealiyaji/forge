@@ -2,6 +2,12 @@ const asyncHandler = require("../lib/asyncHandler.js");
 const bookingService = require("../services/bookingService.js");
 const memberService = require("../services/memberService.js");
 
+const myBookings = asyncHandler(async (req, res) => {
+  const member = await memberService.getMemberByUserId(req.user.id);
+  const bookings = await bookingService.listMyBookings(member.member_id);
+  res.json({ bookings });
+});
+
 const create = asyncHandler(async (req, res) => {
   const member = await memberService.getMemberByUserId(req.user.id);
   const booking = await bookingService.createBooking(req.body.scheduleId, member.member_id);
@@ -14,4 +20,4 @@ const cancel = asyncHandler(async (req, res) => {
   res.status(204).send();
 });
 
-module.exports = { create, cancel };
+module.exports = { myBookings, create, cancel };

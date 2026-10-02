@@ -5,9 +5,13 @@ import type { Role } from "@/lib/nav-config";
 
 const ROLE_HOME: Record<Role, string> = { admin: "/admin", member: "/member", instructor: "/instructor" };
 
-export const getSession = async (): Promise<SessionUser | null> => {
+export const getCookieHeader = async (): Promise<string> => {
   const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
+  return cookieStore.toString();
+};
+
+export const getSession = async (): Promise<SessionUser | null> => {
+  const cookieHeader = await getCookieHeader();
   if (!cookieHeader) return null;
 
   try {
