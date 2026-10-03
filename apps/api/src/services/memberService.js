@@ -5,10 +5,13 @@ const auditService = require("./auditService.js");
 const listMembers = async ({ limit = 50, offset = 0 } = {}) => {
   const { rows } = await pool.query(
     `SELECT u.id, u.name, u.email, m.id AS member_id, m.current_streak,
-            s.status AS subscription_status, u.created_at
+            s.status AS subscription_status, iu.name AS instructor_name, u.created_at
      FROM members m
      JOIN users u ON u.id = m.user_id
      LEFT JOIN subscriptions s ON s.member_id = m.id AND s.ended_at IS NULL
+     LEFT JOIN instructor_members im ON im.member_id = m.id AND im.unassigned_at IS NULL
+     LEFT JOIN instructors i ON i.id = im.instructor_id
+     LEFT JOIN users iu ON iu.id = i.user_id
      WHERE m.deleted_at IS NULL
      ORDER BY u.created_at DESC
      LIMIT $1 OFFSET $2`,
