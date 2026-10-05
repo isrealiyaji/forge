@@ -5,7 +5,7 @@ const auditService = require("./auditService.js");
 const listMembers = async ({ limit = 50, offset = 0 } = {}) => {
   const { rows } = await pool.query(
     `SELECT u.id, u.name, u.email, m.id AS member_id, m.current_streak,
-            s.status AS subscription_status, iu.name AS instructor_name, u.created_at
+            s.status AS subscription_status, i.id AS instructor_id, iu.name AS instructor_name, u.created_at
      FROM members m
      JOIN users u ON u.id = m.user_id
      LEFT JOIN subscriptions s ON s.member_id = m.id AND s.ended_at IS NULL

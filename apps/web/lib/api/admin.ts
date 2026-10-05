@@ -7,6 +7,7 @@ export type AdminMember = {
   member_id: number;
   current_streak: number;
   subscription_status: "active" | "past_due" | "cancelled" | null;
+  instructor_id: number | null;
   instructor_name: string | null;
   created_at: string;
 };
@@ -34,4 +35,8 @@ export const adminApi = {
   deactivateInstructor: (instructorId: number) => apiClient.delete<void>(`/api/instructors/${instructorId}`),
 
   settings: (opts?: Opts) => apiClient.get<{ settings: GymSettings }>("/api/admin/settings", opts),
+
+  reassignMember: (memberId: number, instructorId: number) =>
+    apiClient.post<void>("/api/assignments/reassign", { memberId, instructorId }),
+  rebalance: () => apiClient.post<{ rebalancedCount: number }>("/api/assignments/rebalance"),
 };
