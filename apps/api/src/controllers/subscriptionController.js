@@ -12,6 +12,11 @@ const createPlan = asyncHandler(async (req, res) => {
   res.status(201).json({ plan });
 });
 
+const updatePlan = asyncHandler(async (req, res) => {
+  await subscriptionService.setPlanActive(req.params.id, req.body.isActive, req.user.id);
+  res.status(204).send();
+});
+
 const myCurrentSubscription = asyncHandler(async (req, res) => {
   const member = await memberService.getMemberByUserId(req.user.id);
   const subscription = await subscriptionService.getActiveSubscription(member.member_id);
@@ -36,4 +41,4 @@ const cancel = asyncHandler(async (req, res) => {
   res.status(204).send();
 });
 
-module.exports = { listPlans, createPlan, myCurrentSubscription, checkout, upgrade, cancel };
+module.exports = { listPlans, createPlan, updatePlan, myCurrentSubscription, checkout, upgrade, cancel };

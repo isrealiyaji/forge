@@ -12,4 +12,8 @@ const subscribeSchema = z.object({
   planId: z.coerce.number().int().positive(),
 });
 
-module.exports = { createPlanSchema, subscribeSchema };
+const updatePlanSchema = z.object({
+  isActive: z.boolean(),
+});
+
+module.exports = { createPlanSchema, subscribeSchema, updatePlanSchema };

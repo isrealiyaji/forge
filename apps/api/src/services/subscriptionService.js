@@ -21,6 +21,20 @@ const createPlan = async ({ name, priceCents, interval, paystackPlanCode, featur
   return rows[0];
 };
 
+const setPlanActive = async (planId, isActive, actorUserId) => {
+  const { rows } = await pool.query(
+    "UPDATE subscription_plans SET is_active = $1 WHERE id = $2 AND deleted_at IS NULL RETURNING id",
+    [isActive, planId],
+  );
+  if (!rows[0]) throw new AppError("Plan not found.", 404);
+  await auditService.log({
+    actorUserId,
+    action: isActive ? "plan.activated" : "plan.deactivated",
+    entityType: "subscription_plan",
+    entityId: planId,
+  });
+};
+
 const getActiveSubscription = async (memberId) => {
   const { rows } = await pool.query(
     `SELECT s.*, p.name AS plan_name FROM subscriptions s
@@ -156,4 +170,13 @@ const handleWebhookEvent = async (event) => {
   }
 };
 
-module.exports = { listPlans, createPlan, getActiveSubscription, initializeCheckout, upgrade, cancel, handleWebhookEvent };
+module.exports = {
+  listPlans,
+  createPlan,
+  setPlanActive,
+  getActiveSubscription,
+  initializeCheckout,
+  upgrade,
+  cancel,
+  handleWebhookEvent,
+};

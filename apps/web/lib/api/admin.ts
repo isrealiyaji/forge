@@ -25,6 +25,23 @@ export type GymSettings = {
   subscription_grace_period_days: number;
 };
 
+export type AdminPlan = {
+  id: number;
+  name: string;
+  price_cents: number;
+  interval: "monthly" | "quarterly" | "annual";
+  features: string[];
+  is_active: boolean;
+};
+
+export type CreatePlanInput = {
+  name: string;
+  priceCents: number;
+  interval: "monthly" | "quarterly" | "annual";
+  paystackPlanCode: string;
+  features?: string[];
+};
+
 type Opts = { cookie?: string };
 
 export const adminApi = {
@@ -39,4 +56,10 @@ export const adminApi = {
   reassignMember: (memberId: number, instructorId: number) =>
     apiClient.post<void>("/api/assignments/reassign", { memberId, instructorId }),
   rebalance: () => apiClient.post<{ rebalancedCount: number }>("/api/assignments/rebalance"),
+
+  listPlans: (opts?: Opts) => apiClient.get<{ plans: AdminPlan[] }>("/api/subscriptions/plans", opts),
+  createPlan: (input: CreatePlanInput) =>
+    apiClient.post<{ plan: AdminPlan }>("/api/subscriptions/plans", input),
+  setPlanActive: (planId: number, isActive: boolean) =>
+    apiClient.patch<void>(`/api/subscriptions/plans/${planId}`, { isActive }),
 };
