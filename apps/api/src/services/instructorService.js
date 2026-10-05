@@ -66,6 +66,10 @@ const getRoster = async (instructorId) => {
 
 const softDeleteInstructor = async (instructorId, actorUserId) => {
   await pool.query("UPDATE instructors SET deleted_at = now() WHERE id = $1", [instructorId]);
+  await pool.query(
+    "UPDATE instructor_members SET unassigned_at = now() WHERE instructor_id = $1 AND unassigned_at IS NULL",
+    [instructorId],
+  );
   await auditService.log({
     actorUserId,
     action: "instructor.deactivated",

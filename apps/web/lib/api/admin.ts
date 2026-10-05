@@ -11,9 +11,27 @@ export type AdminMember = {
   created_at: string;
 };
 
+export type AdminInstructor = {
+  id: number;
+  name: string;
+  email: string;
+  specialty: string | null;
+  member_count: number;
+};
+
+export type GymSettings = {
+  max_members_per_instructor: number;
+  subscription_grace_period_days: number;
+};
+
 type Opts = { cookie?: string };
 
 export const adminApi = {
   listMembers: (opts?: Opts) => apiClient.get<{ members: AdminMember[] }>("/api/members", opts),
   deactivateMember: (memberId: number) => apiClient.delete<void>(`/api/members/${memberId}`),
+
+  listInstructors: (opts?: Opts) => apiClient.get<{ instructors: AdminInstructor[] }>("/api/instructors", opts),
+  deactivateInstructor: (instructorId: number) => apiClient.delete<void>(`/api/instructors/${instructorId}`),
+
+  settings: (opts?: Opts) => apiClient.get<{ settings: GymSettings }>("/api/admin/settings", opts),
 };
