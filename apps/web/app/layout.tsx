@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const display = Anton({
+// Self-hosted (via @fontsource) rather than next/font/google — the latter
+// fetches from Google at dev-server request time, and an unreliable network
+// path to fonts.googleapis.com was intermittently breaking page compiles.
+const display = localFont({
+  src: "../../../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2",
   weight: "400",
-  subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Inter({
-  subsets: ["latin"],
+const body = localFont({
+  src: "../../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-body",
   display: "swap",
 });
