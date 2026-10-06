@@ -124,7 +124,7 @@ const getPlanForMember = async (memberId) => {
 
 const listPendingForAdmin = async () => {
   const { rows } = await pool.query(
-    `SELECT np.id AS plan_id, npv.version_number, npv.created_at, mu.name AS member_name, iu.name AS instructor_name
+    `SELECT np.id AS plan_id, npv.version_number, npv.content, npv.created_at, mu.name AS member_name, iu.name AS instructor_name
      FROM nutrition_plans np
      JOIN nutrition_plan_versions npv ON npv.id = np.current_version_id
      JOIN members m ON m.id = np.member_id

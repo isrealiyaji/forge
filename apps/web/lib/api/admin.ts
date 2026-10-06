@@ -73,6 +73,15 @@ export type CreateScheduleInput = {
   recurrenceRule?: string;
 };
 
+export type PendingNutritionPlan = {
+  plan_id: number;
+  version_number: number;
+  content: Record<string, unknown>;
+  created_at: string;
+  member_name: string;
+  instructor_name: string;
+};
+
 type Opts = { cookie?: string };
 
 export const adminApi = {
@@ -103,4 +112,9 @@ export const adminApi = {
   listSchedules: (opts?: Opts) => apiClient.get<{ schedules: AdminSchedule[] }>("/api/classes/schedules", opts),
   createSchedule: (input: CreateScheduleInput) =>
     apiClient.post<{ schedule: { id: number } }>("/api/classes/schedules", input),
+
+  listPendingNutritionPlans: (opts?: Opts) =>
+    apiClient.get<{ plans: PendingNutritionPlan[] }>("/api/nutrition-plans/pending", opts),
+  reviewNutritionPlan: (planId: number, approve: boolean, rejectionReason?: string) =>
+    apiClient.post<void>(`/api/nutrition-plans/${planId}/review`, { approve, rejectionReason }),
 };
