@@ -43,6 +43,15 @@ const updateCapacity = async (classId, capacity, actorUserId) => {
   return rows[0];
 };
 
+const archiveClass = async (classId, actorUserId) => {
+  const { rows } = await pool.query(
+    "UPDATE classes SET deleted_at = now() WHERE id = $1 AND deleted_at IS NULL RETURNING id",
+    [classId],
+  );
+  if (!rows[0]) throw new AppError("Class not found.", 404);
+  await auditService.log({ actorUserId, action: "class.archived", entityType: "class", entityId: classId });
+};
+
 const createSchedule = async ({ classId, startTime, endTime, recurrenceRule }) => {
   const { rows } = await pool.query(
     `INSERT INTO class_schedules (class_id, start_time, end_time, recurrence_rule)
@@ -66,4 +75,11 @@ const listUpcomingSchedules = async () => {
   return rows.map((r) => ({ ...r, booked_count: Number(r.booked_count) }));
 };
 
-module.exports = { createClass, listClasses, updateCapacity, createSchedule, listUpcomingSchedules };
+module.exports = {
+  createClass,
+  listClasses,
+  updateCapacity,
+  archiveClass,
+  createSchedule,
+  listUpcomingSchedules,
+};

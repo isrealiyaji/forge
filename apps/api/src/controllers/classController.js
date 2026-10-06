@@ -16,6 +16,11 @@ const updateCapacity = asyncHandler(async (req, res) => {
   res.status(204).send();
 });
 
+const archive = asyncHandler(async (req, res) => {
+  await classService.archiveClass(req.params.id, req.user.id);
+  res.status(204).send();
+});
+
 const createSchedule = asyncHandler(async (req, res) => {
   const schedule = await classService.createSchedule(req.body);
   res.status(201).json({ schedule });
@@ -26,4 +31,4 @@ const listSchedules = asyncHandler(async (req, res) => {
   res.json({ schedules });
 });
 
-module.exports = { list, create, updateCapacity, createSchedule, listSchedules };
+module.exports = { list, create, updateCapacity, archive, createSchedule, listSchedules };

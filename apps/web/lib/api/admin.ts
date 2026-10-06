@@ -42,6 +42,37 @@ export type CreatePlanInput = {
   features?: string[];
 };
 
+export type AdminClass = {
+  id: number;
+  name: string;
+  description: string | null;
+  capacity: number;
+  instructor_name: string | null;
+};
+
+export type CreateClassInput = {
+  name: string;
+  description?: string;
+  instructorId: number;
+  capacity: number;
+};
+
+export type AdminSchedule = {
+  schedule_id: number;
+  start_time: string;
+  end_time: string;
+  name: string;
+  capacity: number;
+  booked_count: number;
+};
+
+export type CreateScheduleInput = {
+  classId: number;
+  startTime: string;
+  endTime: string;
+  recurrenceRule?: string;
+};
+
 type Opts = { cookie?: string };
 
 export const adminApi = {
@@ -62,4 +93,14 @@ export const adminApi = {
     apiClient.post<{ plan: AdminPlan }>("/api/subscriptions/plans", input),
   setPlanActive: (planId: number, isActive: boolean) =>
     apiClient.patch<void>(`/api/subscriptions/plans/${planId}`, { isActive }),
+
+  listClasses: (opts?: Opts) => apiClient.get<{ classes: AdminClass[] }>("/api/classes", opts),
+  createClass: (input: CreateClassInput) => apiClient.post<{ class: AdminClass }>("/api/classes", input),
+  updateClassCapacity: (classId: number, capacity: number) =>
+    apiClient.patch<void>(`/api/classes/${classId}/capacity`, { capacity }),
+  archiveClass: (classId: number) => apiClient.delete<void>(`/api/classes/${classId}`),
+
+  listSchedules: (opts?: Opts) => apiClient.get<{ schedules: AdminSchedule[] }>("/api/classes/schedules", opts),
+  createSchedule: (input: CreateScheduleInput) =>
+    apiClient.post<{ schedule: { id: number } }>("/api/classes/schedules", input),
 };

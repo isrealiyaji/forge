@@ -25,5 +25,6 @@ router.patch(
   classController.updateCapacity,
 );
 router.post("/schedules", authorize(ROLES.ADMIN), validate(createScheduleSchema), classController.createSchedule);
+router.delete("/:id", authorize(ROLES.ADMIN), classController.archive);
 
 module.exports = router;

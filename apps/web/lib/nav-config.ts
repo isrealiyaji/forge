@@ -30,7 +30,7 @@ export const NAV_CONFIG: Record<Role, { roleLabel: string; items: NavConfigItem[
       { label: "Instructors", icon: UserCog, href: "/admin/instructors" },
       { label: "Assignments", icon: Shuffle, href: "/admin/assignments" },
       { label: "Plans", icon: CreditCard, href: "/admin/plans" },
-      { label: "Classes", icon: CalendarDays },
+      { label: "Classes", icon: CalendarDays, href: "/admin/classes" },
       { label: "Nutrition Review", icon: ClipboardCheck },
       { label: "Analytics", icon: BarChart3 },
       { label: "Settings", icon: Settings, href: "/admin/settings" },
