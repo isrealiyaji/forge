@@ -141,7 +141,7 @@ const LandingPage = () => {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a
-              href="#membership"
+              href="/register"
               className="rounded-sm bg-accent px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-accent-ink transition-transform hover:-translate-y-0.5"
             >
               Apply for Membership
@@ -246,7 +246,7 @@ const LandingPage = () => {
                 ))}
               </ul>
               <a
-                href="#"
+                href="/register"
                 className="mt-7 block rounded-sm bg-ink py-3 text-center text-sm font-bold uppercase tracking-wide text-panel transition-opacity hover:opacity-80"
               >
                 Apply Now
