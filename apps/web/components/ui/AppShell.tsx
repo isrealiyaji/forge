@@ -60,7 +60,9 @@ const AppShell = ({ role, personName, children }: AppShellProps) => {
             >
               <Menu size={22} strokeWidth={2} />
             </button>
-            <p className="font-display text-lg tracking-poster text-ink-inverse">FORGE</p>
+            <a href="/" className="font-display text-lg tracking-poster text-ink-inverse">
+              FORGE
+            </a>
           </div>
 
           <div className="ml-auto flex items-center gap-4">

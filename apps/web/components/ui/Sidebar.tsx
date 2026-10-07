@@ -29,7 +29,9 @@ const Sidebar = ({ roleLabel, personName, items }: SidebarProps) => {
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-line-dark bg-ground px-4 py-6">
       <div className="mb-8 px-2">
-        <p className="font-display text-2xl tracking-poster text-ink-inverse">FORGE</p>
+        <a href="/" className="font-display text-2xl tracking-poster text-ink-inverse hover:opacity-80">
+          FORGE
+        </a>
         <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">{roleLabel}</p>
       </div>
 

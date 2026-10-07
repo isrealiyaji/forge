@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Check } from "lucide-react";
 import SealBadge from "@/components/ui/SealBadge";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -22,6 +23,24 @@ const programs = [
     tag: "UNDERCARD",
     name: "Nutrition Coaching",
     desc: "Your coach proposes a plan, our head coach signs off, you get a plan that's actually reviewed.",
+  },
+];
+
+const facility = [
+  {
+    src: "/images/equipment-weights.jpg",
+    tag: "Free Weights",
+    desc: "Dumbbells 5–100lb, Olympic barbells, bumper plates.",
+  },
+  {
+    src: "/images/equipment-floor.jpg",
+    tag: "The Floor",
+    desc: "Open warehouse space, turf lane, no waiting on a rack.",
+  },
+  {
+    src: "/images/equipment-strength.jpg",
+    tag: "Strength Rigs",
+    desc: "Pull-up stations, squat racks, built for real load.",
   },
 ];
 
@@ -62,6 +81,9 @@ const LandingPage = () => {
           <a href="#card" className="hover:text-ink-inverse">
             The Card
           </a>
+          <a href="#gym" className="hover:text-ink-inverse">
+            The Gym
+          </a>
           <a href="#corner" className="hover:text-ink-inverse">
             Coaches
           </a>
@@ -81,7 +103,25 @@ const LandingPage = () => {
       </header>
 
       {/* Hero */}
-      <section className="bg-noise relative flex min-h-[88vh] flex-col justify-center overflow-hidden px-6 py-16 md:px-12">
+      <section className="relative flex min-h-[88vh] flex-col justify-center overflow-hidden px-6 py-16 md:px-12">
+        <Image
+          src="/images/hero-gym.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[60%_center]"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(100deg, rgba(5,4,3,0.92) 0%, rgba(5,4,3,0.82) 32%, rgba(5,4,3,0.45) 62%, rgba(5,4,3,0.55) 100%)",
+          }}
+          aria-hidden="true"
+        />
+        <div className="bg-noise absolute inset-0 opacity-30" aria-hidden="true" />
+
         <div
           className="absolute -right-16 top-10 hidden rotate-[18deg] bg-accent px-16 py-2 text-center text-xs font-bold uppercase tracking-wide text-accent-ink shadow-[0_12px_24px_-8px_rgba(0,0,0,0.6)] md:block"
           aria-hidden="true"
@@ -89,13 +129,13 @@ const LandingPage = () => {
           Now Enrolling
         </div>
 
-        <div className="max-w-3xl animate-[fade-in_0.6s_ease-out]">
-          <h1 className="font-display text-[15vw] leading-[0.92] tracking-tightest text-ink-inverse md:text-8xl">
+        <div className="relative max-w-3xl animate-[fade-in_0.6s_ease-out]">
+          <h1 className="font-display text-[15vw] leading-[0.92] tracking-tightest text-[#f3ecdd] md:text-8xl">
             Train where
             <br />
             results are <span className="text-accent">earned.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-inverse">
+          <p className="mt-6 max-w-xl text-lg text-[#d9cfbd]">
             Forge Athletic Club is a single, coach-led gym — one roster, one standard, real people
             tracking your progress every session.
           </p>
@@ -108,7 +148,7 @@ const LandingPage = () => {
             </a>
             <a
               href="/member"
-              className="rounded-sm border border-ink-inverse/30 px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-ink-inverse transition-colors hover:border-ink-inverse"
+              className="rounded-sm border border-[#f3ecdd]/30 px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-[#f3ecdd] transition-colors hover:border-[#f3ecdd]"
             >
               Member Login
             </a>
@@ -130,6 +170,33 @@ const LandingPage = () => {
               </h3>
               <p className="text-muted-inverse">{program.desc}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Inside The Gym */}
+      <section id="gym" className="border-t border-line-dark px-6 py-20 md:px-12">
+        <h2 className="font-display text-4xl tracking-poster text-ink-inverse md:text-5xl">Inside The Gym</h2>
+        <p className="mt-3 max-w-xl text-muted-inverse">
+          No frills, no fluff — just the floor, the racks, and the room to work.
+        </p>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {facility.map((shot) => (
+            <figure key={shot.tag} className="group">
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <Image
+                  src={shot.src}
+                  alt={shot.desc}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <figcaption className="mt-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-gold">{shot.tag}</p>
+                <p className="mt-1 text-sm text-muted-inverse">{shot.desc}</p>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </section>
