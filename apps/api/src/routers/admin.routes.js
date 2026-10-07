@@ -13,6 +13,7 @@ const router = Router();
 router.use(authMiddleware, authorize(ROLES.ADMIN));
 
 router.get("/dashboard", adminController.dashboard);
+router.get("/analytics", adminController.analytics);
 router.get("/me", adminController.me);
 router.patch("/me", validate(updateProfileSchema), adminController.updateMe);
 router.patch("/me/password", validate(updatePasswordSchema), adminController.updatePassword);

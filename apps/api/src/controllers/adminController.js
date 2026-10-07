@@ -27,6 +27,11 @@ const dashboard = asyncHandler(async (req, res) => {
   res.json({ summary, pendingNutritionPlans: pendingPlans });
 });
 
+const analytics = asyncHandler(async (req, res) => {
+  const data = await analyticsService.getAnalytics();
+  res.json(data);
+});
+
 const getSettings = asyncHandler(async (req, res) => {
   const settings = await settingsService.getAllSettings();
   res.json({ settings });
@@ -43,4 +48,4 @@ const updateSettings = asyncHandler(async (req, res) => {
   res.status(204).send();
 });
 
-module.exports = { me, updateMe, updatePassword, dashboard, getSettings, updateSettings };
+module.exports = { me, updateMe, updatePassword, dashboard, analytics, getSettings, updateSettings };

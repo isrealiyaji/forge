@@ -82,6 +82,22 @@ export type PendingNutritionPlan = {
   instructor_name: string;
 };
 
+export type AnalyticsSummary = {
+  activeMembers: number;
+  instructors: number;
+  pastDueSubscriptions: number;
+  pendingNutritionPlans: number;
+  classesThisWeek: number;
+};
+
+export type Analytics = {
+  summary: AnalyticsSummary;
+  mrrCents: number;
+  subscriptionsByStatus: { status: string; count: number }[];
+  newMembersByMonth: { month: string; count: number }[];
+  attendanceByDay: { day: string; count: number }[];
+};
+
 type Opts = { cookie?: string };
 
 export const adminApi = {
@@ -92,6 +108,7 @@ export const adminApi = {
   deactivateInstructor: (instructorId: number) => apiClient.delete<void>(`/api/instructors/${instructorId}`),
 
   settings: (opts?: Opts) => apiClient.get<{ settings: GymSettings }>("/api/admin/settings", opts),
+  analytics: (opts?: Opts) => apiClient.get<Analytics>("/api/admin/analytics", opts),
 
   reassignMember: (memberId: number, instructorId: number) =>
     apiClient.post<void>("/api/assignments/reassign", { memberId, instructorId }),
