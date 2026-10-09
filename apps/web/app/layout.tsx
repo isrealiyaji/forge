@@ -2,18 +2,22 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-// Self-hosted (via @fontsource) rather than next/font/google — the latter
-// fetches from Google at dev-server request time, and an unreliable network
-// path to fonts.googleapis.com was intermittently breaking page compiles.
+// Self-hosted (files copied from @fontsource into app/fonts/) rather than
+// next/font/google — the latter fetches from Google at dev-server request
+// time, and an unreliable network path to fonts.googleapis.com was
+// intermittently breaking page compiles. The files live inside apps/web
+// itself, not the hoisted workspace root node_modules — Vercel's build
+// sandboxes each project to its own directory and refuses to resolve a
+// font file that "leaves the filesystem root".
 const display = localFont({
-  src: "../../../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2",
+  src: "./fonts/anton-latin-400-normal.woff2",
   weight: "400",
   variable: "--font-display",
   display: "swap",
 });
 
 const body = localFont({
-  src: "../../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  src: "./fonts/inter-latin-wght-normal.woff2",
   weight: "100 900",
   variable: "--font-body",
   display: "swap",
