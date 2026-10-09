@@ -83,7 +83,7 @@ const AcceptInviteForm = () => {
           name="name"
           value={name}
           onChange={setName}
-          placeholder="Chiamaka Eze"
+          placeholder="Your full name"
           autoComplete="name"
           error={errors.name}
           required

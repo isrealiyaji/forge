@@ -93,7 +93,7 @@ const RegisterPage = () => {
           name="name"
           value={name}
           onChange={setName}
-          placeholder="Amara Osei"
+          placeholder="Your full name"
           autoComplete="name"
           error={errors.name}
           required
