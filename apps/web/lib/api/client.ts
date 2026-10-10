@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+// Server-side callers (Server Components) talk to the API directly and
+// forward the browser's cookie header explicitly via `options.cookie`.
+// Browser-side callers go through this app's own /api/* rewrite instead of
+// the API's real cross-site domain, so the session cookie Set by login ends
+// up scoped to this domain and middleware/Server Components can see it.
+const API_URL =
+  typeof window === "undefined" ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000" : "";
 
 export class ApiError extends Error {
   status: number;
