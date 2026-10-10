@@ -29,7 +29,7 @@ export type AdminPlan = {
   id: number;
   name: string;
   price_cents: number;
-  interval: "monthly" | "quarterly" | "annual";
+  interval: "monthly" | "annually";
   features: string[];
   is_active: boolean;
 };
@@ -37,10 +37,19 @@ export type AdminPlan = {
 export type CreatePlanInput = {
   name: string;
   priceCents: number;
-  interval: "monthly" | "quarterly" | "annual";
-  paystackPlanCode: string;
+  interval: "monthly" | "annually";
+  description?: string;
   features?: string[];
 };
+
+export type UpdatePlanInput = Partial<{
+  name: string;
+  priceCents: number;
+  interval: "monthly" | "annually";
+  description: string;
+  features: string[];
+  isActive: boolean;
+}>;
 
 export type AdminClass = {
   id: number;
@@ -117,8 +126,10 @@ export const adminApi = {
   listPlans: (opts?: Opts) => apiClient.get<{ plans: AdminPlan[] }>("/api/subscriptions/plans", opts),
   createPlan: (input: CreatePlanInput) =>
     apiClient.post<{ plan: AdminPlan }>("/api/subscriptions/plans", input),
+  updatePlan: (planId: number, input: UpdatePlanInput) =>
+    apiClient.patch<{ plan: AdminPlan }>(`/api/subscriptions/plans/${planId}`, input),
   setPlanActive: (planId: number, isActive: boolean) =>
-    apiClient.patch<void>(`/api/subscriptions/plans/${planId}`, { isActive }),
+    apiClient.patch<{ plan: AdminPlan }>(`/api/subscriptions/plans/${planId}`, { isActive }),
 
   listClasses: (opts?: Opts) => apiClient.get<{ classes: AdminClass[] }>("/api/classes", opts),
   createClass: (input: CreateClassInput) => apiClient.post<{ class: AdminClass }>("/api/classes", input),

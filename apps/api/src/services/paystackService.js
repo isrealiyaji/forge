@@ -13,6 +13,20 @@ const initializeCheckout = ({ email, planCode }) =>
     },
   });
 
+// Plans are owned by our admin UI, not the Paystack dashboard — every create
+// or edit here is mirrored to Paystack so the two never drift apart.
+const createPlan = ({ name, amount, interval, description }) =>
+  paystackRequest("/plan", {
+    method: "POST",
+    body: { name, amount, interval, description, currency: config.paystack.currency },
+  });
+
+const updatePlan = (planCode, { name, amount, interval, description }) =>
+  paystackRequest(`/plan/${planCode}`, {
+    method: "PUT",
+    body: { name, amount, interval, description },
+  });
+
 const disableSubscription = ({ subscriptionCode, emailToken }) =>
   paystackRequest("/subscription/disable", {
     method: "POST",
@@ -21,4 +35,4 @@ const disableSubscription = ({ subscriptionCode, emailToken }) =>
 
 const fetchSubscription = (subscriptionCode) => paystackRequest(`/subscription/${subscriptionCode}`);
 
-module.exports = { initializeCheckout, disableSubscription, fetchSubscription };
+module.exports = { initializeCheckout, createPlan, updatePlan, disableSubscription, fetchSubscription };

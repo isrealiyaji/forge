@@ -11,7 +11,7 @@ const STATUS_LABEL: Record<string, { tone: Tone; label: string }> = {
   ended: { tone: "neutral", label: "Ended" },
 };
 
-const formatPrice = (cents: number) => `$${(cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+const formatPrice = (cents: number) => `₦${(cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
 
 const AdminAnalyticsPage = async () => {
   const cookie = await getCookieHeader();

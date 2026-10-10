@@ -1,12 +1,9 @@
 import Panel from "@/components/ui/Panel";
-import RosterRow from "@/components/ui/RosterRow";
 import SettingsSection from "@/components/ui/SettingsSection";
-import TogglePlanButton from "@/components/admin/TogglePlanButton";
+import PlanRow from "@/components/admin/PlanRow";
 import CreatePlanForm from "@/components/admin/CreatePlanForm";
 import { adminApi } from "@/lib/api/admin";
 import { getCookieHeader } from "@/lib/auth/session";
-
-const formatPrice = (cents: number, interval: string) => `$${(cents / 100).toFixed(2)} / ${interval}`;
 
 const AdminPlansPage = async () => {
   const cookie = await getCookieHeader();
@@ -26,17 +23,7 @@ const AdminPlansPage = async () => {
             {plans.length === 0 ? (
               <p className="py-4 text-sm text-muted">No plans yet — create one below.</p>
             ) : (
-              plans.map((plan) => (
-                <RosterRow
-                  key={plan.id}
-                  title={plan.name}
-                  meta={plan.features.length > 0 ? plan.features.join(" · ") : "No features listed"}
-                  tone={plan.is_active ? "good" : "neutral"}
-                  statusLabel={plan.is_active ? "Active" : "Inactive"}
-                  keyStat={formatPrice(plan.price_cents, plan.interval)}
-                  action={<TogglePlanButton planId={plan.id} isActive={plan.is_active} />}
-                />
-              ))
+              plans.map((plan) => <PlanRow key={plan.id} plan={plan} />)
             )}
           </div>
         </Panel>

@@ -132,9 +132,23 @@ const MemberDashboard = async () => {
                         ? `Renews ${formatShortDate(subscription.current_period_end, timezone)}`
                         : ""}
                     </p>
+                    <a
+                      href="/member/subscription"
+                      className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-accent hover:underline"
+                    >
+                      Manage Subscription →
+                    </a>
                   </>
                 ) : (
-                  <p className="mt-1 text-sm text-muted">No active subscription.</p>
+                  <>
+                    <p className="mt-1 text-sm text-muted">No active subscription.</p>
+                    <a
+                      href="/member/subscription"
+                      className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-accent hover:underline"
+                    >
+                      Choose a Plan →
+                    </a>
+                  </>
                 )}
               </div>
             </div>

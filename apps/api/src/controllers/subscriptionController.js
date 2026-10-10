@@ -13,8 +13,8 @@ const createPlan = asyncHandler(async (req, res) => {
 });
 
 const updatePlan = asyncHandler(async (req, res) => {
-  await subscriptionService.setPlanActive(req.params.id, req.body.isActive, req.user.id);
-  res.status(204).send();
+  const plan = await subscriptionService.updatePlan(req.params.id, req.body, req.user.id);
+  res.json({ plan });
 });
 
 const myCurrentSubscription = asyncHandler(async (req, res) => {

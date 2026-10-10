@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import SealBadge from "@/components/ui/SealBadge";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import CursorGrid from "@/components/ui/CursorGrid";
+import { getSession } from "@/lib/auth/session";
 
 const programs = [
   {
@@ -72,7 +73,12 @@ const tiers = [
   },
 ];
 
-const LandingPage = () => {
+const LandingPage = async () => {
+  const session = await getSession();
+  // Logged-in members already have an account — "apply" means pick a plan
+  // and pay, not register again.
+  const applyHref = session?.role === "member" ? "/member/subscription" : "/register";
+
   return (
     <main>
       <CursorGrid />
@@ -144,7 +150,7 @@ const LandingPage = () => {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a
-              href="/register"
+              href={applyHref}
               className="rounded-sm bg-accent px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-accent-ink transition-transform hover:-translate-y-0.5"
             >
               Apply for Membership
@@ -249,7 +255,7 @@ const LandingPage = () => {
                 ))}
               </ul>
               <a
-                href="/register"
+                href={applyHref}
                 className="mt-7 block rounded-sm bg-ink py-3 text-center text-sm font-bold uppercase tracking-wide text-panel transition-opacity hover:opacity-80"
               >
                 Apply Now

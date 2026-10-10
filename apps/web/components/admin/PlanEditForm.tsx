@@ -4,18 +4,17 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
-import { adminApi } from "@/lib/api/admin";
+import { adminApi, type AdminPlan } from "@/lib/api/admin";
 import { ApiError } from "@/lib/api/client";
 
 const INTERVALS = ["monthly", "annually"] as const;
 
-const CreatePlanForm = () => {
+const PlanEditForm = ({ plan, onDone }: { plan: AdminPlan; onDone: () => void }) => {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [interval, setInterval] = useState<(typeof INTERVALS)[number]>("monthly");
-  const [description, setDescription] = useState("");
-  const [features, setFeatures] = useState("");
+  const [name, setName] = useState(plan.name);
+  const [price, setPrice] = useState((plan.price_cents / 100).toFixed(2));
+  const [interval, setInterval] = useState<(typeof INTERVALS)[number]>(plan.interval);
+  const [features, setFeatures] = useState(plan.features.join("\n"));
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -29,47 +28,38 @@ const CreatePlanForm = () => {
     }
     setSubmitting(true);
     try {
-      await adminApi.createPlan({
+      await adminApi.updatePlan(plan.id, {
         name,
         priceCents,
         interval,
-        description: description.trim() || undefined,
         features: features
           .split("\n")
           .map((f) => f.trim())
           .filter(Boolean),
       });
-      setName("");
-      setPrice("");
-      setDescription("");
-      setFeatures("");
       router.refresh();
+      onDone();
     } catch (err) {
-      setFormError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
+      setFormError(err instanceof ApiError ? err.message : "Couldn't update the plan. Try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="space-y-5 border-b border-line px-1 py-5 last:border-b-0"
+    >
       {formError ? (
         <p className="rounded-sm border border-accent/30 bg-accent/10 px-3.5 py-2.5 text-sm text-accent">
           {formError}
         </p>
       ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Name" name="name" value={name} onChange={setName} placeholder="Performance" required />
-        <FormField
-          label="Price (NGN)"
-          name="price"
-          type="number"
-          value={price}
-          onChange={setPrice}
-          placeholder="5000.00"
-          hint="Paystack requires at least ₦100."
-          required
-        />
+        <FormField label="Name" name="name" value={name} onChange={setName} required />
+        <FormField label="Price (NGN)" name="price" type="number" value={price} onChange={setPrice} required />
       </div>
 
       <label className="block">
@@ -87,15 +77,6 @@ const CreatePlanForm = () => {
         </select>
       </label>
 
-      <FormField
-        label="Description"
-        name="description"
-        value={description}
-        onChange={setDescription}
-        placeholder="Everything in Standard, plus nutrition coaching and priority booking."
-        hint="Shown on the Paystack checkout page and receipts."
-      />
-
       <label className="block">
         <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-muted">
           Features <span className="normal-case text-muted/70">(one per line)</span>
@@ -104,16 +85,25 @@ const CreatePlanForm = () => {
           value={features}
           onChange={(e) => setFeatures(e.target.value)}
           rows={3}
-          placeholder={"Full class schedule access\nAssigned coach"}
           className="w-full rounded-sm border border-line bg-panel px-3.5 py-2.5 text-ink placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent"
         />
       </label>
 
-      <Button type="submit" disabled={submitting}>
-        {submitting ? "Creating…" : "Create Plan"}
-      </Button>
+      <div className="flex gap-3">
+        <Button type="submit" disabled={submitting}>
+          {submitting ? "Saving…" : "Save Changes"}
+        </Button>
+        <button
+          type="button"
+          onClick={onDone}
+          disabled={submitting}
+          className="rounded-sm border border-line px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-ink transition-colors hover:bg-line/10"
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };
 
-export default CreatePlanForm;
+export default PlanEditForm;

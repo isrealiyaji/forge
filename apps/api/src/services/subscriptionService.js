@@ -11,28 +11,57 @@ const listPlans = async () => {
   return rows;
 };
 
-const createPlan = async ({ name, priceCents, interval, paystackPlanCode, features }, actorUserId) => {
+// The Paystack plan is created first — if that fails, we never write a row
+// pointing at a plan code that doesn't exist.
+const createPlan = async ({ name, priceCents, interval, description, features }, actorUserId) => {
+  const paystackPlan = await paystackService.createPlan({ name, amount: priceCents, interval, description });
   const { rows } = await pool.query(
     `INSERT INTO subscription_plans (name, price_cents, interval, paystack_plan_code, features)
      VALUES ($1, $2, $3, $4, $5) RETURNING id, name, price_cents, interval, features, is_active`,
-    [name, priceCents, interval, paystackPlanCode, JSON.stringify(features || [])],
+    [name, priceCents, interval, paystackPlan.plan_code, JSON.stringify(features || [])],
   );
   await auditService.log({ actorUserId, action: "plan.created", entityType: "subscription_plan", entityId: rows[0].id });
   return rows[0];
 };
 
-const setPlanActive = async (planId, isActive, actorUserId) => {
-  const { rows } = await pool.query(
-    "UPDATE subscription_plans SET is_active = $1 WHERE id = $2 AND deleted_at IS NULL RETURNING id",
-    [isActive, planId],
+// Partial update — only the fields the admin actually changed are sent.
+// Name/price/interval/description are mirrored to Paystack so the two never
+// drift apart; isActive is an app-only flag (Paystack has no such concept).
+const updatePlan = async (planId, updates, actorUserId) => {
+  const { rows: existingRows } = await pool.query(
+    "SELECT * FROM subscription_plans WHERE id = $1 AND deleted_at IS NULL",
+    [planId],
   );
-  if (!rows[0]) throw new AppError("Plan not found.", 404);
-  await auditService.log({
-    actorUserId,
-    action: isActive ? "plan.activated" : "plan.deactivated",
-    entityType: "subscription_plan",
-    entityId: planId,
-  });
+  const existing = existingRows[0];
+  if (!existing) throw new AppError("Plan not found.", 404);
+
+  const name = updates.name ?? existing.name;
+  const priceCents = updates.priceCents ?? existing.price_cents;
+  const interval = updates.interval ?? existing.interval;
+  const features = updates.features ?? existing.features;
+  const isActive = updates.isActive ?? existing.is_active;
+
+  const paystackFieldsChanged =
+    updates.name !== undefined ||
+    updates.priceCents !== undefined ||
+    updates.interval !== undefined ||
+    updates.description !== undefined;
+  if (paystackFieldsChanged && existing.paystack_plan_code) {
+    await paystackService.updatePlan(existing.paystack_plan_code, {
+      name,
+      amount: priceCents,
+      interval,
+      description: updates.description,
+    });
+  }
+
+  const { rows } = await pool.query(
+    `UPDATE subscription_plans SET name = $1, price_cents = $2, interval = $3, features = $4, is_active = $5
+     WHERE id = $6 RETURNING id, name, price_cents, interval, features, is_active`,
+    [name, priceCents, interval, JSON.stringify(features), isActive, planId],
+  );
+  await auditService.log({ actorUserId, action: "plan.updated", entityType: "subscription_plan", entityId: planId });
+  return rows[0];
 };
 
 const getActiveSubscription = async (memberId) => {
@@ -173,7 +202,7 @@ const handleWebhookEvent = async (event) => {
 module.exports = {
   listPlans,
   createPlan,
-  setPlanActive,
+  updatePlan,
   getActiveSubscription,
   initializeCheckout,
   upgrade,

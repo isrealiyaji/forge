@@ -38,6 +38,17 @@ export type MemberBooking = {
 
 export type AttendanceEntry = { checked_in_at: string; method: "qr" | "manual" };
 
+export type MemberPlan = {
+  id: number;
+  name: string;
+  price_cents: number;
+  interval: "monthly" | "annually";
+  features: string[];
+  is_active: boolean;
+};
+
+export type CheckoutResult = { authorizationUrl: string; reference: string };
+
 type Opts = { cookie?: string };
 
 export const memberApi = {
@@ -58,6 +69,11 @@ export const memberApi = {
 
   mySubscription: (opts?: Opts) =>
     apiClient.get<{ subscription: MemberSubscription }>("/api/subscriptions/me", opts),
+
+  listPlans: (opts?: Opts) => apiClient.get<{ plans: MemberPlan[] }>("/api/subscriptions/plans", opts),
+  checkout: (planId: number) => apiClient.post<CheckoutResult>("/api/subscriptions/checkout", { planId }),
+  upgrade: (planId: number) => apiClient.post<CheckoutResult>("/api/subscriptions/upgrade", { planId }),
+  cancelSubscription: () => apiClient.post<void>("/api/subscriptions/cancel"),
 
   myBookings: (opts?: Opts) => apiClient.get<{ bookings: MemberBooking[] }>("/api/bookings", opts),
 
