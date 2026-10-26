@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 import SealBadge from "@/components/ui/SealBadge";
 import ThemeToggle from "@/components/ui/ThemeToggle";
-import CursorGrid from "@/components/ui/CursorGrid";
 import { getSession } from "@/lib/auth/session";
 
 const programs = [
@@ -81,8 +80,6 @@ const LandingPage = async () => {
 
   return (
     <main>
-      <CursorGrid />
-
       {/* Masthead */}
       <header className="flex items-center justify-between border-b border-line-dark px-6 py-5 md:px-12">
         <p className="font-display text-xl tracking-poster text-ink-inverse">FORGE</p>

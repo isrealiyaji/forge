@@ -12,7 +12,7 @@ type AuthShellProps = {
 
 const AuthShell = ({ title, subtitle, eyebrowBadge, children, footer }: AuthShellProps) => {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center bg-ground px-5 py-12">
+    <main className="relative flex min-h-screen flex-col items-center justify-center px-5 py-12">
       <ThemeToggle className="absolute right-5 top-5" />
       <a href="/" className="mb-8 font-display text-2xl tracking-poster text-ink-inverse">
         FORGE

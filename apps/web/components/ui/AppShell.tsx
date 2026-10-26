@@ -17,7 +17,7 @@ const AppShell = ({ role, personName, children }: AppShellProps) => {
   const { roleLabel, items } = NAV_CONFIG[role];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-ground">
+    <div className="flex h-screen overflow-hidden">
       {/* Desktop sidebar: fixed height, always fully visible, never scrolls with the page */}
       <div className="hidden md:flex md:h-screen">
         <Sidebar roleLabel={roleLabel} personName={personName} items={items} />

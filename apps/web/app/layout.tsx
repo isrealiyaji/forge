@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import CursorGrid from "@/components/ui/CursorGrid";
 import "./globals.css";
 
 // Self-hosted (files copied from @fontsource into app/fonts/) rather than
@@ -46,7 +47,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className={`${display.variable} ${body.variable} font-body`}>{children}</body>
+      <body className={`${display.variable} ${body.variable} font-body`}>
+        <CursorGrid />
+        {children}
+      </body>
     </html>
   );
 };
