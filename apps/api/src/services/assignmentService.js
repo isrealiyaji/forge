@@ -86,7 +86,7 @@ const rebalance = async (actorUserId) => {
 
 const getMemberInstructor = async (memberId) => {
   const { rows } = await pool.query(
-    `SELECT i.id, u.name, i.specialty
+    `SELECT i.id, u.name, u.email, u.phone, i.specialty, i.bio, im.assigned_at
      FROM instructor_members im
      JOIN instructors i ON i.id = im.instructor_id
      JOIN users u ON u.id = i.user_id

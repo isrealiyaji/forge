@@ -118,6 +118,12 @@ const MemberDashboard = async () => {
                 <>
                   <p className="font-display text-2xl tracking-poster text-ink">{instructor.name}</p>
                   <p className="mt-1 text-sm font-semibold text-accent">{instructor.specialty}</p>
+                  <a
+                    href="/member/instructor"
+                    className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-accent hover:underline"
+                  >
+                    View Profile →
+                  </a>
                 </>
               ) : (
                 <p className="text-sm text-muted">No instructor assigned yet.</p>

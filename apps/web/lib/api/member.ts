@@ -16,7 +16,11 @@ export type MemberProfile = {
 export type MemberInstructor = {
   id: number;
   name: string;
+  email: string;
+  phone: string | null;
   specialty: string | null;
+  bio: string | null;
+  assigned_at: string;
 };
 
 export type MemberSubscription = {
