@@ -63,13 +63,16 @@ const createSchedule = async ({ classId, startTime, endTime, recurrenceRule }) =
 
 const listUpcomingSchedules = async () => {
   const { rows } = await pool.query(
-    `SELECT cs.id AS schedule_id, cs.start_time, cs.end_time, c.name, c.capacity,
+    `SELECT cs.id AS schedule_id, cs.start_time, cs.end_time, c.id AS class_id, c.name, c.capacity,
+            u.name AS instructor_name,
             COUNT(cb.id) FILTER (WHERE cb.status = 'booked') AS booked_count
      FROM class_schedules cs
      JOIN classes c ON c.id = cs.class_id
+     LEFT JOIN instructors i ON i.id = c.instructor_id
+     LEFT JOIN users u ON u.id = i.user_id
      LEFT JOIN class_bookings cb ON cb.schedule_id = cs.id
      WHERE cs.start_time > now() AND c.deleted_at IS NULL
-     GROUP BY cs.id, c.name, c.capacity
+     GROUP BY cs.id, c.id, c.name, c.capacity, u.name
      ORDER BY cs.start_time ASC`,
   );
   return rows.map((r) => ({ ...r, booked_count: Number(r.booked_count) }));

@@ -42,6 +42,17 @@ export type MemberBooking = {
 
 export type AttendanceEntry = { checked_in_at: string; method: "qr" | "manual" };
 
+export type MemberSchedule = {
+  schedule_id: number;
+  class_id: number;
+  name: string;
+  instructor_name: string | null;
+  start_time: string;
+  end_time: string;
+  capacity: number;
+  booked_count: number;
+};
+
 export type MemberPlan = {
   id: number;
   name: string;
@@ -80,6 +91,11 @@ export const memberApi = {
   cancelSubscription: () => apiClient.post<void>("/api/subscriptions/cancel"),
 
   myBookings: (opts?: Opts) => apiClient.get<{ bookings: MemberBooking[] }>("/api/bookings", opts),
+  bookClass: (scheduleId: number) =>
+    apiClient.post<{ booking: { id: number; status: "booked" | "waitlisted" } }>("/api/bookings", { scheduleId }),
+  cancelBooking: (bookingId: number) => apiClient.delete<void>(`/api/bookings/${bookingId}`),
+
+  listSchedules: (opts?: Opts) => apiClient.get<{ schedules: MemberSchedule[] }>("/api/classes/schedules", opts),
 
   attendanceHistory: (opts?: Opts) => apiClient.get<{ entries: AttendanceEntry[] }>("/api/attendance", opts),
 

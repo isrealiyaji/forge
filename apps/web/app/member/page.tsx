@@ -86,7 +86,12 @@ const MemberDashboard = async () => {
 
       <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
         <section>
-          <h2 className="mb-4 font-display text-2xl tracking-poster text-ink-inverse">Upcoming Classes</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-display text-2xl tracking-poster text-ink-inverse">Upcoming Classes</h2>
+            <a href="/member/classes" className="text-xs font-bold uppercase tracking-wide text-accent hover:underline">
+              Book a Class →
+            </a>
+          </div>
           <Panel>
             <div className="px-6 py-5">
               {bookings.length === 0 ? (

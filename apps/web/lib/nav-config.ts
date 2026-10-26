@@ -41,7 +41,7 @@ export const NAV_CONFIG: Record<Role, { roleLabel: string; items: NavConfigItem[
     items: [
       { label: "Dashboard", icon: LayoutGrid, href: "/member" },
       { label: "My Instructor", icon: UserCog, href: "/member/instructor" },
-      { label: "Classes", icon: CalendarDays },
+      { label: "Classes", icon: CalendarDays, href: "/member/classes" },
       { label: "Subscription", icon: CreditCard, href: "/member/subscription" },
       { label: "Attendance", icon: Flame },
       { label: "Settings", icon: Settings, href: "/member/settings" },
