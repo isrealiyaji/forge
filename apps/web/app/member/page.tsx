@@ -62,6 +62,12 @@ const MemberDashboard = async () => {
             </p>
             <p className="mt-1 text-lg font-bold uppercase tracking-wide text-accent">Day Streak</p>
             <p className="mt-2 text-sm text-muted">Best run: {member.longest_streak} days</p>
+            <a
+              href="/member/attendance"
+              className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-accent hover:underline"
+            >
+              View Full History →
+            </a>
           </div>
 
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">

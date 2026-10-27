@@ -36,7 +36,7 @@ const checkIn = async (userId) => {
   return { alreadyCheckedIn: false, streak: nextStreak, longestStreak: nextLongest };
 };
 
-const listHistory = async (memberId, { limit = 30 } = {}) => {
+const listHistory = async (memberId, { limit = 120 } = {}) => {
   const { rows } = await pool.query(
     `SELECT checked_in_at, method FROM attendance WHERE member_id = $1 ORDER BY checked_in_at DESC LIMIT $2`,
     [memberId, limit],
