@@ -23,7 +23,7 @@ const listMembers = async ({ limit = 50, offset = 0 } = {}) => {
 const getMemberByUserId = async (userId) => {
   const { rows } = await pool.query(
     `SELECT u.id AS user_id, u.name, u.email, u.phone, u.timezone, m.id AS member_id, m.dob,
-            m.current_streak, m.longest_streak, m.last_checkin_local_date
+            m.current_streak, m.longest_streak, m.last_checkin_local_date::text AS last_checkin_local_date
      FROM members m
      JOIN users u ON u.id = m.user_id
      WHERE u.id = $1 AND m.deleted_at IS NULL`,
