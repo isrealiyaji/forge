@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./apps/api:/app/apps/api
+      # Anonymous volume: keeps the image's own Linux node_modules instead of
+      # letting the bind mount above shadow it with your host's copy.
+      - /app/apps/api/node_modules
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Inside Docker's network, "api" is the hostname Compose gives the API
+      # service — "localhost" here would mean this container itself, not the
+      # API container, so it would never connect.
+      NEXT_PUBLIC_API_URL: http://api:4000
+    volumes:
+      - ./apps/web:/app/apps/web
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+    depends_on:
+      - api
